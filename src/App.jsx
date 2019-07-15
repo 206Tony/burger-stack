@@ -1,5 +1,6 @@
 import React from 'react';
-import IngredientItem from './IngredientItem';
+import Ingredient from './Ingredient';
+import BurgerPane from './BurgerPane';
 
 class App extends React.Component {
   constructor(props) {
@@ -23,37 +24,43 @@ class App extends React.Component {
     }
   }
 
-  updateTask = (e) => {
+  clearStack = (e) => {
     e.preventDefault();
     this.setState({
-      stack: e.target.value
+      stack: []
     })
   }
 
-  addTask = (e) => {
+  handleIngredient = (e) => {
     e.preventDefault();
-    var ingredients = Array.from(this.state.ingredients);
-    ingredients.push(this.state.stack);
     this.setState({
-      ingredients, 
-      stack: ''
+      newIngredient: e.target.value
     })
   }
+
+  onAddIngredient = (e, i) => {
+    e.preventDefault();
+      const stackCopy = Array.from(this.state.stack);
+      stackCopy.unshift(this.state.ingredients[i]);
+      this.setState({
+        stack: stackCopy
+      })
+    }
 
   render() {
-  var ingredients = Array.from(this.state.ingredients);
-  var mappedIngredients = ingredients.map(ingredient => <IngredientItem ingredient={ingredient} />) 
+  var listCopy = Array.from(this.state.ingredients);
+  var stackCopy = Array.from(this.state.stack); 
 
   return (
-    <main style={{display: 'inlineBlock'}}>
-      {mappedIngredients}
-      <hr />
-      <input onChange={this.stack} type='text' name='ingredientsText' /><br />
-      <h1>Burger Stack</h1>
-      <button onClick={this.addTask}>Clear</button>
-    </main>
-  );
-
+      <main>
+        <div id='ingredients'>
+          <Ingredient ingredients={listCopy} addIngredient={this.onAddIngredient} />
+        </div>
+        <div>
+          <BurgerPane usedIngredients={stackCopy} clearStack={this.clearStack} />
+        </div>
+      </main>
+    );
   }
 }
 
